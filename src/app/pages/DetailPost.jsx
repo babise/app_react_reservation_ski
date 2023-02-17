@@ -1,5 +1,5 @@
 import { Button, CardMedia, Rating, Typography } from "@mui/material";
-import { getPostById, updatePost } from "../../setup/services/post.service";
+import { getPostById } from "../../setup/services/post.service";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Box } from "@mui/system";
@@ -7,15 +7,16 @@ import { useMemo } from "react";
 import { createComment } from "../../setup/services/comment.service";
 import { createBooking } from "../../setup/services/booking.service";
 import { TextField } from "@mui/material";
+import { getShop } from "../../setup/services/shop.service";
 
 const DetailPost = () => {
 	const [post, setPost] = useState(null);
 	const { id } = useParams();
-	const [updatePost, setUpdatePost] = useState(true);
+
 	const [comment, setComment] = useState({
 		stars: 0,
 		username: "",
-		comment: "",
+		description: "",
 	});
 	const [phone, setPhone] = useState();
 
@@ -42,24 +43,22 @@ const DetailPost = () => {
 			post: id,
 		};
 		createComment(data).then((res) => {
-			setUpdatePost(true);
-			setComment({ stars: 0, username: "", comment: "" });
+			setComment({ stars: 0, username: "", description: "" });
 		});
 	};
 
 	const handleBooking = (e) => {
 		e.preventDefault();
-		createBooking({ telephoneNumber: phone, post: id }).then((res) => {
-			setUpdatePost(true);
-		});
+		createBooking({ telephoneNumber: phone, post: id }).then((res) => {});
 	};
 
 	useEffect(() => {
-		getPostById(id).then((post) => {
+		getPostById(id).then(async (post) => {
+			const shop = await getShop(post.shop);
+			post.shop = shop;
 			setPost(post);
 		});
 	}, [id]);
-	console.log(post);
 	return (
 		<Box>
 			<Button
@@ -80,9 +79,10 @@ const DetailPost = () => {
 				>
 					<CardMedia
 						component="img"
-						height={100}
+						height={300}
 						image={post.imageUrl}
 						alt={post.title}
+						sx={{ borderRadius: "12px 12px 0 0" }}
 					/>
 					<Box sx={{ display: "flex", padding: "32px" }}>
 						<Box
@@ -109,6 +109,7 @@ const DetailPost = () => {
 								<Typography variant="p">{post.style}</Typography>
 							</Box>
 							<Typography variant="p">{post.description}</Typography>
+							<Typography variant="p">{post.shop.address}</Typography>
 						</Box>
 						<Box
 							sx={{
@@ -146,11 +147,10 @@ const DetailPost = () => {
 						</Button>
 					</Box>
 					{/* Comment form */}
-					<Box>
+					<Box sx={{ display: "flex" }}>
 						<Box
 							sx={{
 								display: "flex",
-								justifyContent: "center",
 								alignItems: "center",
 								flexDirection: "column",
 								padding: "32px",
@@ -170,8 +170,8 @@ const DetailPost = () => {
 							<TextField
 								label="Commentaire"
 								variant="outlined"
-								name="comment"
-								value={comment.comment}
+								name="description"
+								value={comment.description}
 								onChange={onChangeComment}
 							/>
 							<Rating
@@ -197,6 +197,7 @@ const DetailPost = () => {
 						>
 							{post.comments.map((comment) => (
 								<Box
+									key={comment._id}
 									sx={{
 										display: "flex",
 										justifyContent: "center",
@@ -206,9 +207,11 @@ const DetailPost = () => {
 										gap: "32px",
 									}}
 								>
-									<Typography variant="h2">{comment.username}</Typography>
+									<Typography variant="h4" component="p">
+										{comment.username}
+									</Typography>
 									<Rating name="read-only" value={comment.stars} readOnly />
-									<Typography variant="p">{comment.comment}</Typography>
+									<Typography variant="p">{comment.description}</Typography>
 								</Box>
 							))}
 						</Box>

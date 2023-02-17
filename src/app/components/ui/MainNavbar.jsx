@@ -27,7 +27,7 @@ export default function MainNavbar() {
 					justifyContent="flex-end"
 				>
 					<NavbarItem path="/" label="Accueil" />
-					<NavbarItem path="/shop" label="Shop" />
+					<NavbarItem path="/addShop" label="Ajouter un Shop" />
 				</Grid>
 			</Grid>
 		</Box>

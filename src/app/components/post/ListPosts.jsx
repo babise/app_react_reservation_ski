@@ -104,11 +104,11 @@ const ListPosts = () => {
 				<FormControl>
 					<InputLabel id="style">Style</InputLabel>
 					<Select
-						labelId="style"
 						id="style"
 						label="Style"
 						value={style}
 						onChange={handleStyle}
+						labelId="style"
 					>
 						<MenuItem value={""}>Tous</MenuItem>
 						{styleOptions.map((style, index) => {

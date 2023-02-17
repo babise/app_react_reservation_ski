@@ -9,6 +9,7 @@ const CardPost = ({ post }) => {
 				width: "100%",
 				boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
 				borderRadius: "12px",
+				margin: "12px",
 			}}
 		>
 			<CardMedia
@@ -44,7 +45,7 @@ const CardPost = ({ post }) => {
 					<Typography variant="body1">{post.description}</Typography>
 				</Box>
 				<Typography variant="h1" component="h3" sx={{ fontWeight: "bold" }}>
-					{post.price} €
+					{post.price} €/j
 				</Typography>
 			</CardContent>
 		</Card>
